@@ -1,0 +1,6 @@
+Django==6.0.6
+
+# Optional (Tutorial part 8 — Django Debug Toolbar).
+# Uncomment the line below, then follow the setup steps in README.md
+# (and the toolbar's own installation guide) to enable it:
+# django-debug-toolbar
