@@ -1,4 +1,6 @@
-#!/home/alireza/Desktop/PycharmProjects/mysitedjango/djangotutorial/venv/bin/python3
+#!/bin/sh
+'''exec' "/home/alireza/Downloads/PRO(me git)/mysitedjango/venv/bin/python3" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
