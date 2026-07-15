@@ -1,0 +1,22 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+
+<p><a href="{% url 'polls:index' %}">&larr; بازگشت به صفحه اصلی</a></p>
+
+<form action="{% url 'polls:search' %}" method="get">
+    <input type="text" name="q" placeholder="جستجو در سوالات..." value="{{ query }}">
+    <input type="submit" value="جستجو">
+</form>
+
+<h1>نتایج جستجو برای: "{{ query }}"</h1>
+
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>نتیجه‌ای یافت نشد.</p>
+{% endif %}

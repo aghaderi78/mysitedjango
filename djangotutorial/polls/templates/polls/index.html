@@ -2,6 +2,11 @@
 
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
+<form action="{% url 'polls:search' %}" method="get">
+    <input type="text" name="q" placeholder="جستجو در سوالات..." value="{{ request.GET.q }}">
+    <input type="submit" value="جستجو">
+</form>
+
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}

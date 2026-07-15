@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db.models import F,Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -19,7 +19,7 @@ class IndexView(generic.ListView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by(
             "-pub_date"
-        )[:5]
+        )[5:]
 
 
 class DetailView(generic.DetailView):
@@ -57,3 +57,22 @@ def vote(request, question_id):
         selected_choice.save()
 
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
+class SearchResultsView(generic.ListView):
+
+    template_name = "polls/search_results.html"
+    context_object_name = "question_list"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q", "").strip()
+        self.query = query
+        if not query:
+            return Question.objects.none()
+        return Question.objects.filter(
+            Q(question_text__icontains=query), pub_date__lte=timezone.now()
+        ).order_by("-pub_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.query
+        return context
