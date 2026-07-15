@@ -1,11 +1,21 @@
 {% load static %}
-
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
 <form action="{% url 'polls:search' %}" method="get">
     <input type="text" name="q" placeholder="جستجو در سوالات..." value="{{ request.GET.q }}">
     <input type="submit" value="جستجو">
 </form>
+
+<h2>دسته‌بندی‌ها</h2>
+{% if categories %}
+    <ul>
+    {% for category in categories %}
+        <li><a href="{% url 'polls:category_questions' category.id %}">{{ category.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>هنوز دسته‌بندی‌ای ثبت نشده است.</p>
+{% endif %}
 
 {% if latest_question_list %}
     <ul>

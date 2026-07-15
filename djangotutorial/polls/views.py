@@ -4,8 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
-
-from .models import Choice, Question
+from .models import Choice, Question,Category
 
 
 class IndexView(generic.ListView):
@@ -13,14 +12,14 @@ class IndexView(generic.ListView):
     context_object_name = "latest_question_list"
 
     def get_queryset(self):
-        """
-        Return the last five published questions (not including those set to be
-        published in the future).
-        """
+
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by(
             "-pub_date"
-        )[5:]
-
+        )[:5]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        return context
 
 class DetailView(generic.DetailView):
     model = Question
@@ -75,4 +74,20 @@ class SearchResultsView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["query"] = self.query
+        return context
+    
+class CategoryQuestionListView(generic.ListView):
+
+    template_name = "polls/category_questions.html"
+    context_object_name = "question_list"
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, pk=self.kwargs["category_id"])
+        return Question.objects.filter(
+            category=self.category, pub_date__lte=timezone.now()
+        ).order_by("-pub_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category"] = self.category
         return context
