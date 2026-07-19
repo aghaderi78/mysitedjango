@@ -1,10 +1,10 @@
-from django.db.models import F,Q
+from django.db.models import F, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
-from .models import Choice, Question,Category
+from .models import Choice, Question, Category
 
 
 class IndexView(generic.ListView):
@@ -12,23 +12,21 @@ class IndexView(generic.ListView):
     context_object_name = "latest_question_list"
 
     def get_queryset(self):
-
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by(
             "-pub_date"
         )[:5]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.all()
         return context
+
 
 class DetailView(generic.DetailView):
     model = Question
     template_name = "polls/detail.html"
 
     def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
@@ -42,7 +40,6 @@ def vote(request, question_id):
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(
             request,
             "polls/detail.html",
@@ -54,11 +51,10 @@ def vote(request, question_id):
     else:
         selected_choice.votes = F("votes") + 1
         selected_choice.save()
-
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
 
-class SearchResultsView(generic.ListView):
 
+class SearchResultsView(generic.ListView):
     template_name = "polls/search_results.html"
     context_object_name = "question_list"
 
@@ -75,9 +71,9 @@ class SearchResultsView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["query"] = self.query
         return context
-    
-class CategoryQuestionListView(generic.ListView):
 
+
+class CategoryQuestionListView(generic.ListView):
     template_name = "polls/category_questions.html"
     context_object_name = "question_list"
 
